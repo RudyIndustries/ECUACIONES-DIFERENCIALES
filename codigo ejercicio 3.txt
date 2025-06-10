@@ -1,0 +1,43 @@
+% Parámetros del sistema
+k = 0.001;    % Tasa de crecimiento
+Nm = 5000;    % Capacidad máxima
+N0 = 100;     % Población inicial
+t0 = 0;       % Tiempo inicial (años)
+tf = 50;      % Tiempo final (años)
+h = 0.5;      % Paso de tiempo
+t = t0:h:tf;  % Vector de tiempo
+n = length(t);
+
+% Método de Euler
+Ne = zeros(1, n);
+Ne(1) = N0;
+for i = 1:n-1
+    dNe = k*Ne(i)*(Nm - Ne(i));
+    Ne(i+1) = Ne(i) + h*dNe;
+end
+
+% Método de Runge-Kutta (RK4)
+Nrk = zeros(1, n);
+Nrk(1) = N0;
+for i = 1:n-1
+    k1 = k*Nrk(i)*(Nm - Nrk(i));
+    k2 = k*(Nrk(i) + 0.5*h*k1)*(Nm - (Nrk(i) + 0.5*h*k1));
+    k3 = k*(Nrk(i) + 0.5*h*k2)*(Nm - (Nrk(i) + 0.5*h*k2));
+    k4 = k*(Nrk(i) + h*k3)*(Nm - (Nrk(i) + h*k3));
+    Nrk(i+1) = Nrk(i) + (h/6)*(k1 + 2*k2 + 2*k3 + k4);
+end
+
+% Resultado en t=20 años
+t_target = 20;
+idx = find(t >= t_target, 1);
+fprintf('Ejercicio 3 - t=20 años\n');
+fprintf('Euler: N = %.4f individuos\n', Ne(idx));
+fprintf('Runge-Kutta: N = %.4f individuos\n', Nrk(idx));
+
+% Gráfica
+plot(t, Ne, 'b', t, Nrk, 'r--', 'LineWidth', 1.5);
+title('Crecimiento Poblacional');
+xlabel('Tiempo (años)');
+ylabel('Población');
+legend('Euler', 'Runge-Kutta');
+grid on;
