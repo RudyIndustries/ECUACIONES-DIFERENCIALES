@@ -1,0 +1,44 @@
+% Parámetros del sistema
+g = 9.8;      % Aceleración gravitacional (m/s²)
+k = 0.25;     % Coeficiente de resistencia del aire
+m = 70;       % Masa (kg)
+v0 = 0;       % Velocidad inicial (m/s)
+t0 = 0;       % Tiempo inicial (s)
+tf = 30;      % Tiempo final (s)
+h = 0.1;      % Paso de tiempo
+t = t0:h:tf;  % Vector de tiempo
+n = length(t);
+
+% Método de Euler
+ve = zeros(1, n);
+ve(1) = v0;
+for i = 1:n-1
+    dve = -g + (k/m)*ve(i)^2;
+    ve(i+1) = ve(i) + h*dve;
+end
+
+% Método de Runge-Kutta (RK4)
+vrk = zeros(1, n);
+vrk(1) = v0;
+for i = 1:n-1
+    k1 = -g + (k/m)*vrk(i)^2;
+    k2 = -g + (k/m)*(vrk(i) + 0.5*h*k1)^2;
+    k3 = -g + (k/m)*(vrk(i) + 0.5*h*k2)^2;
+    k4 = -g + (k/m)*(vrk(i) + h*k3)^2;
+    vrk(i+1) = vrk(i) + (h/6)*(k1 + 2*k2 + 2*k3 + k4);
+end
+
+% Resultado en t=15s
+t_target = 15;
+idx = find(t >= t_target, 1);
+fprintf('Ejercicio 1 - t=15s\n');
+fprintf('Euler: v = %.3f m/s\n', ve(idx));
+fprintf('Runge-Kutta: v = %.3f m/s\n\n', vrk(idx));
+
+% Gráfica
+plot(t, ve, 'b', t, vrk, 'r--', 'LineWidth', 1.5);
+title('Velocidad de un objeto cayendo');
+xlabel('Tiempo (s)');
+ylabel('Velocidad (m/s)');
+legend('Euler', 'Runge-Kutta');
+grid on;
