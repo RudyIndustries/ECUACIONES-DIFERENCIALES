@@ -1,0 +1,43 @@
+% Parámetros del sistema
+alpha = 0.08; % Tasa de crecimiento
+K = 100;      % Capacidad máxima (mm²)
+A0 = 1;       % Área inicial (mm²)
+t0 = 0;       % Tiempo inicial (días)
+tf = 60;      % Tiempo final (días)
+h = 0.5;      % Paso de tiempo
+t = t0:h:tf;  % Vector de tiempo
+n = length(t);
+
+% Método de Euler
+Ae = zeros(1, n);
+Ae(1) = A0;
+for i = 1:n-1
+    dAe = alpha*Ae(i)*(1 - (Ae(i)/K)^2);
+    Ae(i+1) = Ae(i) + h*dAe;
+end
+
+% Método de Runge-Kutta (RK4)
+Ark = zeros(1, n);
+Ark(1) = A0;
+for i = 1:n-1
+    k1 = alpha*Ark(i)*(1 - (Ark(i)/K)^2;
+    k2 = alpha*(Ark(i) + 0.5*h*k1)*(1 - ((Ark(i) + 0.5*h*k1)/K)^2);
+    k3 = alpha*(Ark(i) + 0.5*h*k2)*(1 - ((Ark(i) + 0.5*h*k2)/K)^2);
+    k4 = alpha*(Ark(i) + h*k3)*(1 - ((Ark(i) + h*k3)/K)^2);
+    Ark(i+1) = Ark(i) + (h/6)*(k1 + 2*k2 + 2*k3 + k4);
+end
+
+% Resultado en t=30 días
+t_target = 30;
+idx = find(t >= t_target, 1);
+fprintf('Ejercicio 2 - t=30 días\n');
+fprintf('Euler: A = %.3f mm²\n', Ae(idx));
+fprintf('Runge-Kutta: A = %.3f mm²\n\n', Ark(idx));
+
+% Gráfica
+plot(t, Ae, 'b', t, Ark, 'r--', 'LineWidth', 1.5);
+title('Crecimiento de un tumor');
+xlabel('Tiempo (días)');
+ylabel('Área (mm²)');
+legend('Euler', 'Runge-Kutta');
+grid on;
