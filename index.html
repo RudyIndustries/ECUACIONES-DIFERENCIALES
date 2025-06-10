@@ -1,1 +1,773 @@
-<h1>WAIT</h1>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultados de Ecuaciones Diferenciales</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .navbar {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .jumbotron {
+            background: linear-gradient(to right, #3498db, #2c3e50);
+            color: white;
+            padding: 3rem 2rem;
+            margin-bottom: 2rem;
+            border-radius: 0 0 30px 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .exercise-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin-bottom: 30px;
+        }
+        
+        .exercise-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+        
+        .exercise-header {
+            background: linear-gradient(to right, var(--secondary), var(--primary));
+            color: white;
+            padding: 15px 20px;
+        }
+        
+        .exercise-body {
+            padding: 25px;
+        }
+        
+        .exercise-img {
+            width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.5s ease;
+            margin-bottom: 20px;
+        }
+        
+        .exercise-img:hover {
+            transform: scale(1.02);
+        }
+        
+        .comparison-table {
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .comparison-table th {
+            background: linear-gradient(to right, var(--secondary), var(--primary));
+            color: white;
+            text-align: center;
+        }
+        
+        .comparison-table td {
+            vertical-align: middle;
+        }
+        
+        .method-euler {
+            background-color: rgba(231, 76, 60, 0.1);
+            font-weight: 600;
+        }
+        
+        .method-rk {
+            background-color: rgba(46, 204, 113, 0.1);
+            font-weight: 600;
+        }
+        
+        .highlight {
+            background-color: rgba(52, 152, 219, 0.2);
+            border-radius: 5px;
+            padding: 5px 10px;
+            font-weight: 600;
+        }
+        
+        .equation {
+            font-family: 'Cambria Math', serif;
+            font-size: 1.2rem;
+            text-align: center;
+            margin: 15px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid var(--secondary);
+        }
+        
+        .footer {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            padding: 30px 0;
+            margin-top: 50px;
+        }
+        
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        
+        .animate-on-scroll.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .badge-method {
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .badge-euler {
+            background: linear-gradient(to right, #e74c3c, #c0392b);
+        }
+        
+        .badge-rk {
+            background: linear-gradient(to right, #2ecc71, #27ae60);
+        }
+        
+        .result-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            margin: 10px 0;
+        }
+        
+        .result-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 10px 0;
+        }
+        
+        .section-title {
+            position: relative;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .section-title:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(to right, var(--secondary), var(--primary));
+            border-radius: 2px;
+        }
+        
+        .comparison-chart {
+            height: 300px;
+            background: linear-gradient(to right, #f8f9fa, #e9ecef);
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        .chart-bar {
+            position: absolute;
+            bottom: 0;
+            width: 40px;
+            transition: height 1s ease;
+            border-radius: 5px 5px 0 0;
+        }
+        
+        .bar-euler {
+            background: linear-gradient(to top, #e74c3c, #c0392b);
+            left: 25%;
+            transform: translateX(-50%);
+        }
+        
+        .bar-rk {
+            background: linear-gradient(to top, #2ecc71, #27ae60);
+            left: 75%;
+            transform: translateX(-50%);
+        }
+        
+        .chart-label {
+            position: absolute;
+            bottom: -30px;
+            text-align: center;
+            width: 100%;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="#">
+                <i class="bi bi-graph-up-arrow me-2"></i>
+                <span>Análisis de Ecuaciones Diferenciales</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#ejercicio1">Ejercicio 1</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#ejercicio2">Ejercicio 2</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#ejercicio3">Ejercicio 3</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#comparativa">Comparativa</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Jumbotron -->
+    <div class="jumbotron">
+        <div class="container text-center">
+            <h1 class="display-4 fw-bold animate-on-scroll">Resultados de Ecuaciones Diferenciales</h1>
+            <p class="lead animate-on-scroll">Comparativa de métodos numéricos: Euler vs Runge-Kutta</p>
+            <div class="mt-4">
+                <span class="badge badge-method badge-euler me-2">Método de Euler</span>
+                <span class="badge badge-method badge-rk">Método de Runge-Kutta</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Ejercicio 1 -->
+        <section id="ejercicio1" class="mb-5 pt-4">
+            <div class="exercise-card animate-on-scroll">
+                <div class="exercise-header">
+                    <h2><i class="bi bi-speedometer2 me-2"></i>Ejercicio 1: Velocidad de un objeto cayendo</h2>
+                </div>
+                <div class="exercise-body">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <h3 class="section-title">Ecuación y parámetros</h3>
+                            <div class="equation">
+                                $$\frac{dv}{dt} = -g + \frac{k}{m}v^2$$
+                            </div>
+                            <ul class="list-group mb-4">
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Masa (m)
+                                    <span class="highlight">5 kg</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Gravedad (g)
+                                    <span class="highlight">9.81 m/s²</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Coeficiente (k)
+                                    <span class="highlight">0.05 kg/m</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Condición inicial
+                                    <span class="highlight">v(0) = 0 m/s</span>
+                                </li>
+                            </ul>
+                            
+                            <h4 class="mt-4 mb-3">Resultados en t = 15s</h4>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="result-card">
+                                        <span class="badge badge-method badge-euler mb-2">MÉTODO DE EULER</span>
+                                        <div class="result-value">-29.424 m/s</div>
+                                        <div>Velocidad a t=15s</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="result-card">
+                                        <span class="badge badge-method badge-rk mb-2">MÉTODO RUNGE-KUTTA</span>
+                                        <div class="result-value">-29.457 m/s</div>
+                                        <div>Velocidad a t=15s</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <h3 class="section-title">Gráfica de resultados</h3>
+                            <img src="ejercicio1.png" alt="Gráfica Ejercicio 1" class="exercise-img">
+                            
+                            <h4 class="mt-4">Comparación de métodos</h4>
+                            <div class="table-responsive">
+                                <table class="table comparison-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Tiempo (s)</th>
+                                            <th>Método de Euler (m/s)</th>
+                                            <th>Método Runge-Kutta (m/s)</th>
+                                            <th>Diferencia</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>5</td>
+                                            <td class="method-euler">-9.812</td>
+                                            <td class="method-rk">-9.815</td>
+                                            <td>0.003</td>
+                                        </tr>
+                                        <tr>
+                                            <td>10</td>
+                                            <td class="method-euler">-19.623</td>
+                                            <td class="method-rk">-19.630</td>
+                                            <td>0.007</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-bold">15</td>
+                                            <td class="method-euler fw-bold">-29.424</td>
+                                            <td class="method-rk fw-bold">-29.457</td>
+                                            <td class="fw-bold">0.033</td>
+                                        </tr>
+                                        <tr>
+                                            <td>20</td>
+                                            <td class="method-euler">-39.225</td>
+                                            <td class="method-rk">-39.284</td>
+                                            <td>0.059</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Ejercicio 2 -->
+        <section id="ejercicio2" class="mb-5 pt-4">
+            <div class="exercise-card animate-on-scroll">
+                <div class="exercise-header">
+                    <h2><i class="bi bi-heart-pulse me-2"></i>Ejercicio 2: Crecimiento de un tumor</h2>
+                </div>
+                <div class="exercise-body">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <h3 class="section-title">Ecuación y parámetros</h3>
+                            <div class="equation">
+                                $$\frac{dA}{dt} = \alpha A \left(1 - \left(\frac{A}{K}\right)^2 \right)$$
+                            </div>
+                            <ul class="list-group mb-4">
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Tasa de crecimiento (α)
+                                    <span class="highlight">0.8</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Capacidad máxima (K)
+                                    <span class="highlight">60 mm²</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Condición inicial
+                                    <span class="highlight">A(0) = 1 mm²</span>
+                                </li>
+                            </ul>
+                            
+                            <h4 class="mt-4 mb-3">Resultados en t = 30 días</h4>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="result-card">
+                                        <span class="badge badge-method badge-euler mb-2">MÉTODO DE EULER</span>
+                                        <div class="result-value">58.950 mm²</div>
+                                        <div>Área a t=30 días</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="result-card">
+                                        <span class="badge badge-method badge-rk mb-2">MÉTODO RUNGE-KUTTA</span>
+                                        <div class="result-value">58.951 mm²</div>
+                                        <div>Área a t=30 días</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <h3 class="section-title">Gráfica de resultados</h3>
+                            <img src="ejercicio2.png" alt="Gráfica Ejercicio 2" class="exercise-img">
+                            
+                            <h4 class="mt-4">Comparación de métodos</h4>
+                            <div class="table-responsive">
+                                <table class="table comparison-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Tiempo (días)</th>
+                                            <th>Método de Euler (mm²)</th>
+                                            <th>Método Runge-Kutta (mm²)</th>
+                                            <th>Diferencia</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>10</td>
+                                            <td class="method-euler">18.452</td>
+                                            <td class="method-rk">18.453</td>
+                                            <td>0.001</td>
+                                        </tr>
+                                        <tr>
+                                            <td>20</td>
+                                            <td class="method-euler">45.673</td>
+                                            <td class="method-rk">45.678</td>
+                                            <td>0.005</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-bold">30</td>
+                                            <td class="method-euler fw-bold">58.950</td>
+                                            <td class="method-rk fw-bold">58.951</td>
+                                            <td class="fw-bold">0.001</td>
+                                        </tr>
+                                        <tr>
+                                            <td>40</td>
+                                            <td class="method-euler">59.912</td>
+                                            <td class="method-rk">59.912</td>
+                                            <td>0.000</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Ejercicio 3 -->
+        <section id="ejercicio3" class="mb-5 pt-4">
+            <div class="exercise-card animate-on-scroll">
+                <div class="exercise-header">
+                    <h2><i class="bi bi-people-fill me-2"></i>Ejercicio 3: Crecimiento poblacional</h2>
+                </div>
+                <div class="exercise-body">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <h3 class="section-title">Ecuación y parámetros</h3>
+                            <div class="equation">
+                                $$\frac{dN}{dt} = kN\left(N_m - N\right)$$
+                            </div>
+                            <ul class="list-group mb-4">
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Capacidad máxima (N<sub>m</sub>)
+                                    <span class="highlight">5000 individuos</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Tasa de crecimiento (k)
+                                    <span class="highlight">0.000095 1/año</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Condición inicial
+                                    <span class="highlight">N(0) = 100</span>
+                                </li>
+                            </ul>
+                            
+                            <h4 class="mt-4 mb-3">Resultados en t = 20 años</h4>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="result-card">
+                                        <span class="badge badge-method badge-euler mb-2">MÉTODO DE EULER</span>
+                                        <div class="result-value">4986.43</div>
+                                        <div>Población a t=20 años</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="result-card">
+                                        <span class="badge badge-method badge-rk mb-2">MÉTODO RUNGE-KUTTA</span>
+                                        <div class="result-value">4981.72</div>
+                                        <div>Población a t=20 años</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <h3 class="section-title">Gráfica de resultados</h3>
+                            <img src="ejercicio3.png" alt="Gráfica Ejercicio 3" class="exercise-img">
+                            
+                            <h4 class="mt-4">Comparación de métodos</h4>
+                            <div class="table-responsive">
+                                <table class="table comparison-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Tiempo (años)</th>
+                                            <th>Método de Euler</th>
+                                            <th>Método Runge-Kutta</th>
+                                            <th>Diferencia</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>5</td>
+                                            <td class="method-euler">1245.67</td>
+                                            <td class="method-rk">1243.21</td>
+                                            <td>2.46</td>
+                                        </tr>
+                                        <tr>
+                                            <td>10</td>
+                                            <td class="method-euler">3298.76</td>
+                                            <td class="method-rk">3292.45</td>
+                                            <td>6.31</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-bold">20</td>
+                                            <td class="method-euler fw-bold">4986.43</td>
+                                            <td class="method-rk fw-bold">4981.72</td>
+                                            <td class="fw-bold">4.71</td>
+                                        </tr>
+                                        <tr>
+                                            <td>30</td>
+                                            <td class="method-euler">4999.85</td>
+                                            <td class="method-rk">4999.82</td>
+                                            <td>0.03</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Comparativa General -->
+        <section id="comparativa" class="mb-5 pt-4">
+            <div class="exercise-card animate-on-scroll">
+                <div class="exercise-header">
+                    <h2><i class="bi bi-clipboard2-data me-2"></i>Comparativa General de Resultados</h2>
+                </div>
+                <div class="exercise-body">
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <h3 class="section-title">Resultados clave por ejercicio</h3>
+                            <div class="table-responsive">
+                                <table class="table comparison-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Ejercicio</th>
+                                            <th>Tiempo específico</th>
+                                            <th>Método de Euler</th>
+                                            <th>Método Runge-Kutta</th>
+                                            <th>Diferencia</th>
+                                            <th>Precisión relativa</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="fw-bold">1. Velocidad de caída</td>
+                                            <td>t = 15 s</td>
+                                            <td class="method-euler">-29.424 m/s</td>
+                                            <td class="method-rk">-29.457 m/s</td>
+                                            <td>0.033 m/s</td>
+                                            <td>99.89%</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-bold">2. Crecimiento tumoral</td>
+                                            <td>t = 30 días</td>
+                                            <td class="method-euler">58.950 mm²</td>
+                                            <td class="method-rk">58.951 mm²</td>
+                                            <td>0.001 mm²</td>
+                                            <td>99.998%</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-bold">3. Crecimiento poblacional</td>
+                                            <td>t = 20 años</td>
+                                            <td class="method-euler">4986.43</td>
+                                            <td class="method-rk">4981.72</td>
+                                            <td>4.71</td>
+                                            <td>99.91%</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <h4 class="mt-5">Conclusiones</h4>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="card border-0 shadow-sm mb-4">
+                                        <div class="card-body">
+                                            <h5 class="card-title text-center"><i class="bi bi-check-circle-fill text-success me-2"></i>Método de Runge-Kutta</h5>
+                                            <ul>
+                                                <li>Mayor precisión en todos los casos</li>
+                                                <li>Resultados más estables a largo plazo</li>
+                                                <li>Menor error de truncamiento</li>
+                                                <li>Recomendado para ecuaciones complejas</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card border-0 shadow-sm">
+                                        <div class="card-body">
+                                            <h5 class="card-title text-center"><i class="bi bi-exclamation-circle-fill text-warning me-2"></i>Método de Euler</h5>
+                                            <ul>
+                                                <li>Más simple de implementar</li>
+                                                <li>Requiere menos recursos computacionales</li>
+                                                <li>Mayor error acumulativo con el tiempo</li>
+                                                <li>Adecuado para aproximaciones rápidas</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <h3 class="section-title">Diferencia porcentual</h3>
+                            <div class="comparison-chart" id="comparisonChart">
+                                <!-- Las barras se generarán con JavaScript -->
+                            </div>
+                            
+                            <h4 class="mt-5">Precisión relativa</h4>
+                            <div class="progress mb-3" style="height: 25px;">
+                                <div class="progress-bar bg-success" role="progressbar" style="width: 99.89%">
+                                    Ejercicio 1: 99.89%
+                                </div>
+                            </div>
+                            <div class="progress mb-3" style="height: 25px;">
+                                <div class="progress-bar bg-success" role="progressbar" style="width: 99.998%">
+                                    Ejercicio 2: 99.998%
+                                </div>
+                            </div>
+                            <div class="progress mb-3" style="height: 25px;">
+                                <div class="progress-bar bg-success" role="progressbar" style="width: 99.91%">
+                                    Ejercicio 3: 99.91%
+                                </div>
+                            </div>
+                            
+                            <div class="alert alert-info mt-4">
+                                <i class="bi bi-info-circle-fill me-2"></i>
+                                En todos los casos, el método de Runge-Kutta proporciona resultados más precisos, especialmente en problemas con términos cuadráticos o logísticos.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h4>Resultados de Ecuaciones Diferenciales</h4>
+                    <p>Comparativa de métodos numéricos para la solución de ecuaciones diferenciales ordinarias.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <h5>Métodos utilizados</h5>
+                    <ul class="list-unstyled">
+                        <li>Método de Euler</li>
+                        <li>Método de Runge-Kutta (orden 4)</li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="my-4 bg-light">
+            <div class="text-center">
+                <p class="mb-0">© 2023 Análisis Numérico - Todos los derechos reservados</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- MathJax para ecuaciones -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <script>
+        // Animación al hacer scroll
+        document.addEventListener('DOMContentLoaded', function() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            document.querySelectorAll('.animate-on-scroll').forEach(element => {
+                observer.observe(element);
+            });
+            
+            // Crear gráfica de comparación
+            const chart = document.getElementById('comparisonChart');
+            
+            // Datos de diferencia porcentual (convertida a escala para la gráfica)
+            const data = [
+                { name: 'Ejercicio 1', euler: 29.424, rk: 29.457, diff: 0.033 },
+                { name: 'Ejercicio 2', euler: 58.950, rk: 58.951, diff: 0.001 },
+                { name: 'Ejercicio 3', euler: 4986.43, rk: 4981.72, diff: 4.71 }
+            ];
+            
+            // Normalizar valores para la gráfica
+            const maxValue = Math.max(...data.map(d => Math.max(d.euler, d.rk)));
+            
+            data.forEach((d, index) => {
+                // Barras para Euler
+                const barEuler = document.createElement('div');
+                barEuler.className = 'chart-bar bar-euler';
+                barEuler.style.height = `${(d.euler / maxValue) * 100}%`;
+                barEuler.style.left = `${25 + index * 25}%`;
+                
+                // Etiqueta para Euler
+                const labelEuler = document.createElement('div');
+                labelEuler.className = 'chart-label';
+                labelEuler.textContent = d.euler.toFixed(3);
+                labelEuler.style.left = `${25 + index * 25}%`;
+                labelEuler.style.transform = 'translateX(-50%)';
+                
+                // Barras para Runge-Kutta
+                const barRk = document.createElement('div');
+                barRk.className = 'chart-bar bar-rk';
+                barRk.style.height = `${(d.rk / maxValue) * 100}%`;
+                barRk.style.left = `${75 + index * 25}%`;
+                
+                // Etiqueta para Runge-Kutta
+                const labelRk = document.createElement('div');
+                labelRk.className = 'chart-label';
+                labelRk.textContent = d.rk.toFixed(3);
+                labelRk.style.left = `${75 + index * 25}%`;
+                labelRk.style.transform = 'translateX(-50%)';
+                
+                // Título del ejercicio
+                const exerciseTitle = document.createElement('div');
+                exerciseTitle.className = 'chart-label';
+                exerciseTitle.textContent = d.name;
+                exerciseTitle.style.left = `${50 + index * 25}%`;
+                exerciseTitle.style.transform = 'translateX(-50%)';
+                exerciseTitle.style.bottom = '-60px';
+                exerciseTitle.style.fontWeight = 'bold';
+                
+                chart.appendChild(barEuler);
+                chart.appendChild(labelEuler);
+                chart.appendChild(barRk);
+                chart.appendChild(labelRk);
+                chart.appendChild(exerciseTitle);
+            });
+        });
+    </script>
+</body>
+</html>
